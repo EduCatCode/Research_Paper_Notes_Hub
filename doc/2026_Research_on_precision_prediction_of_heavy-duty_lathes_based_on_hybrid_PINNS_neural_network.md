@@ -30,7 +30,7 @@
 ![圖 5. PINN 結構與損耗函數組成的示意圖](../images/Fig5_Schematic_diagram_of_the_PINNs_structure_and_loss_function_composition.png)
 
 
-### **落地瓶頸與風險 (Engineering Bottlenecks)**
+### **落地瓶頸與風險**
 1.  **收斂穩定性 (Numerical Stability) 與梯度病態**：物理約束項包含一階與二階自動微分計算。在多目標優化中（$\lambda = 0.1$），高階導數的數值極易與 MSE Loss 產生梯度量級差異（Gradient Pathologies），導致模型在訓練初期極難收斂，需依賴精細的學習率調度或動態權重（Dynamic Re-weighting）。
 2.  **龍格現象 (Runge's Phenomenon) 的溢位風險**：Data Pipeline 強行使用了 6 階多項式進行數據擴充。在工程落地時，若空間座標 $z$（高達數萬 mm）未進行極其嚴格的歸一化，高階多項式運算極易導致浮點數溢位或邊緣劇烈震盪。
 3.  **運算開銷 (Computational Overhead)**：PINN 依賴 PyTorch/TensorFlow 的 `create_graph=True` 來計算二階導數，在訓練階段會佔用大量 GPU 記憶體；此外，部署時維護三個獨立模型（BP, RBF, PINN）的 Ensemble 架構，推論與後續更新維護成本過高。
