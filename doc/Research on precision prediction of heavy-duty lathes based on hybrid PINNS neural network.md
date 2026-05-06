@@ -26,6 +26,9 @@
 ### **資料處理管線 (Data Pipeline)**
 其流程從原始雙頻雷射干涉儀數據出發，先切分為 A（訓練）、B/C（外插驗證）三個區段。數據經過 **6 階多項式擴充與 Z-score 標準化（Standardization）** 後，提取為符合物理模型輸入的座標張量（包含座標 $z$ 與 one-hot 編碼的區段 $s$）。建議參考論文中的 **[Figure 4: Schematic diagram of the research framework and technical route]** 以及 **[Figure 5: PINNs structure]**，該架構圖清晰展示了數據流如何與自動微分算子（Automatic Differentiation）進行交互與對齊。
 
+![圖 4. 研究架構與技術路線示意圖](images/Fig4_Schematic_diagram_of_the_research_framework_and_technical_route.png)
+![圖 5. PINN 結構與損耗函數組成的示意圖](images/Fig5_Schematic_diagram_of_the_PINNs_structure_and_loss_function_composition.png)
+
 ### **落地瓶頸與風險 (Engineering Bottlenecks)**
 1.  **收斂穩定性 (Numerical Stability) 與梯度病態**：物理約束項包含一階與二階自動微分計算。在多目標優化中（$\lambda = 0.1$），高階導數的數值極易與 MSE Loss 產生梯度量級差異（Gradient Pathologies），導致模型在訓練初期極難收斂，需依賴精細的學習率調度或動態權重（Dynamic Re-weighting）。
 2.  **龍格現象 (Runge's Phenomenon) 的溢位風險**：Data Pipeline 強行使用了 6 階多項式進行數據擴充。在工程落地時，若空間座標 $z$（高達數萬 mm）未進行極其嚴格的歸一化，高階多項式運算極易導致浮點數溢位或邊緣劇烈震盪。
@@ -38,6 +41,9 @@
 ### **實驗與數據分析 (Experimental Scrutiny)**
 *   **基準對比分析 (Baseline Scrutiny)**：請詳細查看論文中的 **[Table 2: Network architectures]**。作者為了凸顯 PINN 的強大，對比的對照組居然是極度老舊的 **3層傳統 BP 神經網路與基本的 RBF 網路**。在面對「極小樣本連續性預測」的任務時，業界標準通常是採用內建不確定性量化的高斯過程迴歸（Gaussian Process Regression, GPR）或 SVR，這種「打稻草人」的比較方式嚴重誇大了該模型的優勢。
 *   **極端數據分佈質疑 (Cherry-picking Suspicion)**：這是一個巨大的紅旗！根據 **[Table 1]** 與論文描述，每個 300 mm 的測試區段（Section A, B, C）**竟然只有 7 個測量點**！作者在僅有 7 個數據點的 Section A 強行套用 **「6 階多項式 (6th-order polynomial)」** 進行擬合與擴充。在數學上，7 個點配上 6 階多項式會達到 100% 過度擬合（完美穿過所有點但區間內瘋狂震盪），神經網路學到的其實是這條被人工扭曲的曲線，而非真實物理規律。
+
+
+![表 2. 所有模型的網路架構和關鍵超參數](images/Table2_Network_architectures.png)
 
 ### **真實價值與改良方向 (Future Optimization)**
 *   **理論貢獻評估**：該效能提升（高達 85% 的誤差降低）在極大程度上並非源於「物理公式（因為他們根本沒有使用真正的熱力學公式，只是用了平滑度導數）」，而是透過繁雜的 **「模型融合 (Ensemble) + 線性校準」** 強行取巧擬合。這是一篇標準的「工程 Trick 堆疊」大於「理論創新」的論文。
