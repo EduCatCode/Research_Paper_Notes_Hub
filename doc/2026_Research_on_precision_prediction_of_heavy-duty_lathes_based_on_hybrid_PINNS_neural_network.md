@@ -23,7 +23,7 @@
 ## 實務分析
 
 
-### **資料處理管線 (Data Pipeline)**
+### **資料處理流程**
 其流程從原始雙頻雷射干涉儀數據出發，先切分為 A（訓練）、B/C（外插驗證）三個區段。數據經過 **6 階多項式擴充與 Z-score 標準化（Standardization）** 後，提取為符合物理模型輸入的座標張量（包含座標 $z$ 與 one-hot 編碼的區段 $s$）。建議參考論文中的 **[figure 4: Schematic diagram of the research framework and technical route]** 以及 **[figure 5: PINNs structure]**，該架構圖清晰展示了數據流如何與自動微分算子（Automatic Differentiation）進行交互與對齊。
 
 ![圖 4. 研究架構與技術路線示意圖](../images/Fig4_Schematic_diagram_of_the_research_framework_and_technical_route.png)
@@ -39,7 +39,7 @@
 
 ## 落地性評析
 
-### **實驗與數據分析 (Experimental Scrutiny)**
+### **實驗與數據分析**
 *   **基準對比分析 (Baseline Scrutiny)**：請詳細查看論文中的 **[Table 2: Network architectures]**。作者為了凸顯 PINN 的強大，對比的對照組居然是極度老舊的 **3層傳統 BP 神經網路與基本的 RBF 網路**。在面對「極小樣本連續性預測」的任務時，業界標準通常是採用內建不確定性量化的高斯過程迴歸（Gaussian Process Regression, GPR）或 SVR，這種「打稻草人」的比較方式嚴重誇大了該模型的優勢。
 *   **極端數據分佈質疑 (Cherry-picking Suspicion)**：這是一個巨大的紅旗！根據 **[Table 1]** 與論文描述，每個 300 mm 的測試區段（Section A, B, C）**竟然只有 7 個測量點**！作者在僅有 7 個數據點的 Section A 強行套用 **「6 階多項式 (6th-order polynomial)」** 進行擬合與擴充。在數學上，7 個點配上 6 階多項式會達到 100% 過度擬合（完美穿過所有點但區間內瘋狂震盪），神經網路學到的其實是這條被人工扭曲的曲線，而非真實物理規律。
 
