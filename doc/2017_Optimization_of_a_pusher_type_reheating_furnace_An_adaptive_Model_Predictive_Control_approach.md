@@ -26,7 +26,7 @@
 ### **資料處理流程**
 其流程從原始感測器數據（如：6 個加熱區的熱電偶溫度、空氣/燃料流量計、壓力計及出口光學高溫計）出發，經過 **SCADA & 虛擬感測器（Virtual Sensor）模組** 後，估算出爐內高達 136 塊鋼坯的即時溫度分佈，並提取為符合 LPV 模型輸入的特徵張量。建議參考論文中的 **[Figure 3: Representation of the detailed APC mode]**，該架構圖清晰展示了數據流（SCADA&VS）如何與兩層 MPC 算子（TOCS 與 DO）及解耦選擇器進行閉環交互。
 
-![圖 3. 詳細的 APC 模式示意圖](./images/Figure3_Representation_of_the_detailed_APC_mode.png)
+![圖 3. 詳細的 APC 模式示意圖](../images/Figure3_Representation_of_the_detailed_APC_mode.png)
 
 ### **落地瓶頸與風險**
 1.  **推論延遲與 QP Solver 超時**：爐內最多容納 136 塊鋼坯。模型為了準確控制，必須在預測區間（Prediction horizon, $N_p$）內評估每塊鋼坯的溫度軌跡。若產線降速導致 $N_p$ 增加，其約束矩陣將呈爆炸性成長，在工業邊緣設備上極易發生 QP Solver 無法在 1 分鐘控制週期內收斂的災難。
@@ -41,7 +41,7 @@
 *   **基準對比分析 (Baseline Scrutiny)**：請詳細查看 **[Figure 6: Billets final temperature trends]** 及其文字描述。作者宣稱了極大的節能效益，但其對比的對照組居然是**「現場操作員手動調 PID (manual conduction of local PID controllers)」**。拿一套先進的 MPC 去擊敗人為保守的手動旋鈕操作是典型的「打稻草人」，建議關注其若與傳統的基礎自動化（Level 1）解耦控制相比，是否具備實務上的統計顯著性。
 *   **數據分佈與櫻桃採擷質疑**：作者在 **[Figure 6]** 中展示的結果僅僅擷取了短短 **15 個小時**的區間（4 小時關閉，11 小時開啟）。對於熱慣性極大的大型工業加熱爐，其動態週期極長。用十幾個小時的截斷數據來佐證該模型具備長期的「重大經濟回報（major profitability）」，存在明顯的櫻桃採擷（Cherry-picking）嫌疑。
 
-![圖 6 鋼坯最終溫度趨勢及相關約束條件（有/無已開發的 APC 系統）](./images/Figure6_Billets_final_temperature_trends_and_related_constraints_without_and_with_the_developed_APC_system.png)
+![圖 6 鋼坯最終溫度趨勢及相關約束條件（有/無已開發的 APC 系統）](../images/Figure6_Billets_final_temperature_trends_and_related_constraints_without_and_with_the_developed_APC_system.png)
 
 ### **未來工作**
 *   **理論貢獻評估**：該效能提升在極大程度上**並非源於物理公式的創新**（其使用的是教科書級別的一維熱傳導方程式 Eq. 1-3），而是因為「原本的人工作業太過浪費」。其技術本質是利用複雜的系統識別（System ID）與軟約束權重調整強行湊合出一個可用的工業控制器。
