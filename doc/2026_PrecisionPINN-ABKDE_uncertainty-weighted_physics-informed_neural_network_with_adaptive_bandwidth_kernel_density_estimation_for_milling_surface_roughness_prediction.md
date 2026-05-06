@@ -1,4 +1,4 @@
-# 論文技術導讀：PrecisionPINN-ABKDE: uncertainty-weighted physics-informed neural network with adaptive bandwidth kernel density estimation for milling surface roughness prediction
+# PrecisionPINN-ABKDE: uncertainty-weighted physics-informed neural network with adaptive bandwidth kernel density estimation for milling surface roughness prediction
 
 ## 基礎資訊
 *   **期刊/會議**：Mechanical Systems and Signal Processing (MSSP) (IF: 7.9 / Q1)
