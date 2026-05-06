@@ -43,7 +43,7 @@
 *   **基準對比分析 (Baseline Scrutiny)**：請詳細查看論文中的 **[Table 2: Network architectures]**。作者為了凸顯 PINN 的強大，對比的對照組居然是極度老舊的 **3層傳統 BP 神經網路與基本的 RBF 網路**。在面對「極小樣本連續性預測」的任務時，業界標準通常是採用內建不確定性量化的高斯過程迴歸（Gaussian Process Regression, GPR）或 SVR，這種「打稻草人」的比較方式嚴重誇大了該模型的優勢。
 *   **極端數據分佈質疑 (Cherry-picking Suspicion)**：這是一個巨大的紅旗！根據 **[Table 1]** 與論文描述，每個 300 mm 的測試區段（Section A, B, C）**竟然只有 7 個測量點**！作者在僅有 7 個數據點的 Section A 強行套用 **「6 階多項式 (6th-order polynomial)」** 進行擬合與擴充。在數學上，7 個點配上 6 階多項式會達到 100% 過度擬合（完美穿過所有點但區間內瘋狂震盪），神經網路學到的其實是這條被人工扭曲的曲線，而非真實物理規律。
 
-
+![表 1. 精密度測試結果](../images/Table1_Precision_test_results.png)
 ![表 2. 所有模型的網路架構和關鍵超參數](../images/Table2_Network_architectures.png)
 
 ### **未來工作**
