@@ -17,13 +17,13 @@
 
 ## 📋 Latest Feed
 
-| Date | Domain | Paper | Tags | Core Value |
-|:-----|:-------|:------|:-----|:-----------|
-| 2026-05-07 | Heat Treatment · Furnace | [GA-BP HEC Furnace (2025)](docs/heat-treatment/furnace/2025_GABP-FurnaceHEC.md) | `#GA-BP` `#BPNN` `#HEC` `#SRRF` `#EnergyPrediction` | GA warm-starts BP weights for furnace energy prediction; tapping-temp leakage & straw-man baseline red flags |
-| 2026-05-06 | Heat Treatment · Furnace | [Multi-Mode MPC Billet Furnace (2023)](docs/heat-treatment/furnace/2023_MultiModeMPC-Furnace.md) | `#MPC` `#VirtualSensor` `#MultiMode` `#LPV` | 3-mode LPV-QP for all furnace conditions; N=12 energy periods for 2% savings claim — cherry-pick red flag |
-| 2026-05-05 | Metal Processing · Milling | [PrecisionPINN-ABKDE (2026)](docs/metal-processing/milling/2026_PrecisionPINN-ABKDE.md) | `#PINN` `#Milling` `#UQ` | Uncertainty-weighted PINN for surface roughness; 64-sample regime, overfitting red flag |
-| 2026-05-05 | Metal Processing · Lathe | [Hybrid PINNs Heavy-Duty Lathe (2026)](docs/metal-processing/lathe/2026_HybridPINNs-Lathe.md) | `#PINN` `#Lathe` `#Ensemble` | Three-model ensemble for Z-axis error; 7-point + 6th-order polynomial = full overfit |
-| 2026-05-05 | Heat Treatment · Furnace | [Pusher Furnace Adaptive MPC (2017)](docs/heat-treatment/furnace/2017_PusherFurnace-MPC.md) | `#MPC` `#VirtualSensor` `#Furnace` | Two-layer LPV-MPC for billet reheating; straw-man baseline, 15-hour cherry-pick |
+| Date | Domain | Paper | Tags | Core Value | ⚠️ Red Flags |
+|:-----|:-------|:------|:-----|:-----------|:------------|
+| 2026-05-07 | Heat Treatment · Furnace | [GA-BP HEC Furnace (2025)](docs/heat-treatment/furnace/2025_GABP-FurnaceHEC.md) | `#GA-BP` `#BPNN` `#HEC` `#SRRF` `#EnergyPrediction` | 以 GA 暖啟動優化 BP 初始權重，首次應用於鋼鐵再加熱爐每噸能耗（HEC）預測，MAPE 從 9.76% 降至 5.25% | 出爐溫度為後驗輸入（數據洩漏）；僅與原始 BP 對比（稻草人基準線） |
+| 2026-05-06 | Heat Treatment · Furnace | [Multi-Mode MPC Billet Furnace (2023)](docs/heat-treatment/furnace/2023_MultiModeMPC-Furnace.md) | `#MPC` `#VirtualSensor` `#MultiMode` `#LPV` | 三模式 LPV-QP MPC 統一覆蓋加熱、保溫、過渡全爐況，搭配虛擬感測器實現無縫模式切換 | 僅 N=12 能耗週期即聲稱節能 2%，驗證窗口過短 |
+| 2026-05-05 | Metal Processing · Milling | [PrecisionPINN-ABKDE (2026)](docs/metal-processing/milling/2026_PrecisionPINN-ABKDE.md) | `#PINN` `#Milling` `#UQ` | 以自適應帶寬核密度估計（ABKDE）為不確定性權重嵌入 PINN，預測銑削表面粗糙度並提供信賴區間 | 訓練集僅 64 筆，過擬合風險極高 |
+| 2026-05-05 | Metal Processing · Lathe | [Hybrid PINNs Heavy-Duty Lathe (2026)](docs/metal-processing/lathe/2026_HybridPINNs-Lathe.md) | `#PINN` `#Lathe` `#Ensemble` | 三模型（PINNs + 數據驅動）集成預測重型車床熱致 Z 軸定位誤差，融合物理約束與量測數據 | 7 點量測配合 6 階多項式，完全過擬合；無跨工況泛化驗證 |
+| 2026-05-05 | Heat Treatment · Furnace | [Pusher Furnace Adaptive MPC (2017)](docs/heat-treatment/furnace/2017_PusherFurnace-MPC.md) | `#MPC` `#VirtualSensor` `#Furnace` | 雙層自適應 LPV-MPC 控制推鋼式加熱爐出口溫度，虛擬感測器補償熱電偶盲區 | 基準線為固定增益控制器（過時）；僅 15 小時連續驗證 |
 
 ---
 
@@ -60,51 +60,10 @@ Research_Paper_Notes_Hub/
 │   └── heat-treatment/
 │       └── furnace/
 │
-├── images/                        # Figures, tables, equations — one subfolder per paper
-│   ├── metal-processing/
-│   │   ├── PrecisionPINN-ABKDE_2026/
-│   │   └── HybridPINNs-Lathe_2026/
-│   └── heat-treatment/
-│       └── PusherFurnace-MPC_2017/
-│
-├── templates/
-│   └── paper-note-template.md     # Standardized note template
-│
-└── prompts/
-    └── paper-summary-prompt.md    # LLM system/user prompts + Claude Code skill guide
-```
-
----
-
-## ✍️ Contributing: Adding a New Paper
-
-### Step-by-step
-
-1. **Pick the right sub-domain folder** under `docs/` — create a new one if the sub-domain doesn't exist yet, and add it to the Domain Index table above.
-2. **Name the note file** as `YYYY_ShortSlug.md`
-3. **Create a paper-specific image folder** at `images/{domain}/{ShortSlug}_{YYYY}/`
-4. **Name every image** with the paper slug as prefix (see naming convention below)
-5. **Fill the template** at [templates/paper-note-template.md](templates/paper-note-template.md)
-6. **Generate a first draft** using the [LLM prompt](prompts/paper-summary-prompt.md) or the `/summarize-paper` command in Claude Code
-7. **Prepend a row** to the Latest Feed table in this README
-
-### File & Image Naming Convention
-
-| Item | Pattern | Example |
-|------|---------|---------|
-| Paper note | `YYYY_ShortSlug.md` | `2024_GPR-ToolWear.md` |
-| Image folder | `{ShortSlug}_{YYYY}/` | `GPR-ToolWear_2024/` |
-| Figure image | `{Slug}_Fig{N}_{ShortDesc}.png` | `GPR-ToolWear_Fig1_Framework.png` |
-| Equation image | `{Slug}_Eq{N}.png` | `GPR-ToolWear_Eq3.png` |
-| Table image | `{Slug}_Table{N}_{ShortDesc}.png` | `GPR-ToolWear_Table2_Results.png` |
-
-> **Why prefix images with the slug?**  
-> Without a prefix, `Eq1.png` or `Table1.png` becomes meaningless once you have 20+ papers. The slug prefix makes every image self-identifying regardless of folder context.
-
-### Image Reference Path in Notes
-
-Paper notes live 3 levels deep (`docs/{domain}/{sub-domain}/`), so all image references use:
-
-```markdown
-![Caption](../../../images/{domain}/{Slug}_{YYYY}/{Slug}_{TypeN}_{Desc}.png)
+└── images/                        # Figures, tables, equations — one subfolder per paper
+    ├── metal-processing/
+    │   ├── PrecisionPINN-ABKDE_2026/
+    │   └── HybridPINNs-Lathe_2026/
+    └── heat-treatment/
+        └── PusherFurnace-MPC_2017/
 ```
