@@ -60,51 +60,10 @@ Research_Paper_Notes_Hub/
 │   └── heat-treatment/
 │       └── furnace/
 │
-├── images/                        # Figures, tables, equations — one subfolder per paper
-│   ├── metal-processing/
-│   │   ├── PrecisionPINN-ABKDE_2026/
-│   │   └── HybridPINNs-Lathe_2026/
-│   └── heat-treatment/
-│       └── PusherFurnace-MPC_2017/
-│
-├── templates/
-│   └── paper-note-template.md     # Standardized note template
-│
-└── prompts/
-    └── paper-summary-prompt.md    # LLM system/user prompts + Claude Code skill guide
-```
-
----
-
-## ✍️ Contributing: Adding a New Paper
-
-### Step-by-step
-
-1. **Pick the right sub-domain folder** under `docs/` — create a new one if the sub-domain doesn't exist yet, and add it to the Domain Index table above.
-2. **Name the note file** as `YYYY_ShortSlug.md`
-3. **Create a paper-specific image folder** at `images/{domain}/{ShortSlug}_{YYYY}/`
-4. **Name every image** with the paper slug as prefix (see naming convention below)
-5. **Fill the template** at [templates/paper-note-template.md](templates/paper-note-template.md)
-6. **Generate a first draft** using the [LLM prompt](prompts/paper-summary-prompt.md) or the `/summarize-paper` command in Claude Code
-7. **Prepend a row** to the Latest Feed table in this README
-
-### File & Image Naming Convention
-
-| Item | Pattern | Example |
-|------|---------|---------|
-| Paper note | `YYYY_ShortSlug.md` | `2024_GPR-ToolWear.md` |
-| Image folder | `{ShortSlug}_{YYYY}/` | `GPR-ToolWear_2024/` |
-| Figure image | `{Slug}_Fig{N}_{ShortDesc}.png` | `GPR-ToolWear_Fig1_Framework.png` |
-| Equation image | `{Slug}_Eq{N}.png` | `GPR-ToolWear_Eq3.png` |
-| Table image | `{Slug}_Table{N}_{ShortDesc}.png` | `GPR-ToolWear_Table2_Results.png` |
-
-> **Why prefix images with the slug?**  
-> Without a prefix, `Eq1.png` or `Table1.png` becomes meaningless once you have 20+ papers. The slug prefix makes every image self-identifying regardless of folder context.
-
-### Image Reference Path in Notes
-
-Paper notes live 3 levels deep (`docs/{domain}/{sub-domain}/`), so all image references use:
-
-```markdown
-![Caption](../../../images/{domain}/{Slug}_{YYYY}/{Slug}_{TypeN}_{Desc}.png)
+└── images/                        # Figures, tables, equations — one subfolder per paper
+    ├── metal-processing/
+    │   ├── PrecisionPINN-ABKDE_2026/
+    │   └── HybridPINNs-Lathe_2026/
+    └── heat-treatment/
+        └── PusherFurnace-MPC_2017/
 ```
